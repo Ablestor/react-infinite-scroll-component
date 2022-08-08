@@ -4,8 +4,10 @@ import { ThresholdUnits, parseThreshold } from './utils/threshold';
 
 type Fn = () => any;
 export interface Props {
+  prev: Fn;
   next: Fn;
-  hasMore: boolean;
+  hasMoreNext: boolean;
+  hasMorePrev : boolean;
   children: ReactNode;
   loader: ReactNode;
   scrollThreshold?: number | string;
@@ -317,11 +319,21 @@ export default class InfiniteScroll extends Component<Props, State> {
       ? this.isElementAtTop(target, this.props.scrollThreshold)
       : this.isElementAtBottom(target, this.props.scrollThreshold);
 
+    const atTop = !this.props.inverse
+      ? this.isElementAtTop(target, this.props.scrollThreshold)
+      : this.isElementAtBottom(target, this.props.scrollThreshold);
+
     // call the `next` function in the props to trigger the next data fetch
-    if (atBottom && this.props.hasMore) {
+    if (atBottom && this.props.hasMoreNext) {
       this.actionTriggered = true;
       this.setState({ showLoader: true });
       this.props.next && this.props.next();
+    }
+
+    if (atTop && this.props.hasMorePrev) {
+      this.actionTriggered = true;
+      // this.setState({ showLoader: true });
+      this.props.prev && this.props.prev();
     }
 
     this.lastScrollTop = target.scrollTop;
@@ -380,10 +392,10 @@ export default class InfiniteScroll extends Component<Props, State> {
           {this.props.children}
           {!this.state.showLoader &&
             !hasChildren &&
-            this.props.hasMore &&
+            this.props.hasMoreNext &&
             this.props.loader}
-          {this.state.showLoader && this.props.hasMore && this.props.loader}
-          {!this.props.hasMore && this.props.endMessage}
+          {this.state.showLoader && this.props.hasMoreNext && this.props.loader}
+          {!this.props.hasMoreNext && this.props.endMessage}
         </div>
       </div>
     );
