@@ -260,12 +260,22 @@ export default class InfiniteScroll extends Component<Props, State> {
     const threshold = parseThreshold(scrollThreshold);
 
     if (threshold.unit === ThresholdUnits.Pixel) {
+      console.log({
+        type: 'Pixel',
+        scrollTop: target.scrollTop,
+        v: threshold.value + clientHeight - target.scrollHeight + 1,
+      });
       return (
         target.scrollTop <=
         threshold.value + clientHeight - target.scrollHeight + 1
       );
     }
 
+    console.log({
+      type: 'Percent',
+      scrollTop: target.scrollTop,
+      v: threshold.value / 100 + clientHeight - target.scrollHeight + 1,
+    });
     return (
       target.scrollTop <=
       threshold.value / 100 + clientHeight - target.scrollHeight + 1
@@ -284,11 +294,21 @@ export default class InfiniteScroll extends Component<Props, State> {
     const threshold = parseThreshold(scrollThreshold);
 
     if (threshold.unit === ThresholdUnits.Pixel) {
+      console.log({
+        type: 'Pixel',
+        scrollBottom: target.scrollTop + clientHeight,
+        v: target.scrollHeight - threshold.value,
+      });
       return (
         target.scrollTop + clientHeight >= target.scrollHeight - threshold.value
       );
     }
 
+    console.log({
+      type: 'Percent',
+      scrollBottom: target.scrollTop + clientHeight,
+      v: (threshold.value / 100) * target.scrollHeight,
+    });
     return (
       target.scrollTop + clientHeight >=
       (threshold.value / 100) * target.scrollHeight
